@@ -20,7 +20,7 @@ IG 短劇《黃泉燒肉店》（[@baoandrain0428](https://www.instagram.com/bao
 | `src/appendix.md` | 原篇對照表 |
 | `tools/build.py` | 產生所有頁面與 `img/` 插圖 |
 | `assets/` | 樣式、閱讀功能腳本 |
-| `index.html`、`ch01–23.html`、`characters.html`、`appendix.html` | 產生出來的頁面，不要手改 |
+| `index.html`、`ch01–23.html`、`characters.html`、`appendix.html`、`gallery.html`（圖庫） | 產生出來的頁面，不要手改 |
 
 ## 更新
 

@@ -47,6 +47,23 @@ def image(src):
     return IMG_CACHE[src]
 
 
+THUMBS = set()
+
+
+def thumb(src):
+    """圖庫用的小縮圖（寬 480）"""
+    big = image(src)[0]
+    out = big.replace("img/", "img/t/", 1)
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    if not os.path.exists(out) or os.path.getmtime(big) > os.path.getmtime(out):
+        im = Image.open(big)
+        im.thumbnail((480, 720), Image.LANCZOS)
+        im.save(out, "WEBP", quality=72, method=6)
+    THUMBS.add(out)
+    w, h = Image.open(out).size
+    return out, w, h
+
+
 # ------------------------------------------------------------------ 解析
 IMG_RE = re.compile(r"^!\[(.*?)\]\((.*?)\)\s*$")
 
@@ -159,6 +176,7 @@ def page(title, body, prefix="", kind="", desc=""):
 <header class="bar">
   <a class="brand" href="{prefix}index.html">黃泉燒肉店<span>小說文庫</span></a>
   <div class="tools">
+    <a class="tool" href="{prefix}gallery.html">圖庫</a>
     <button id="btnToc" aria-label="目錄">目錄</button>
     <button id="btnSet" aria-label="閱讀設定">Aa</button>
   </div>
@@ -184,6 +202,7 @@ def toc_html(prefix=""):
         for c in v["chapters"]:
             h.append('<a href="%s%s" data-ch="%d"><i>%02d</i>%s</a>' % (prefix, c["file"], c["no"], c["no"], html.escape(c["title"])))
     h.append('<a class="toc-top" href="%sappendix.html">附錄：原篇對照</a>' % prefix)
+    h.append('<a class="toc-top" href="%sgallery.html">插畫圖庫</a>' % prefix)
     return "\n".join(h)
 
 
@@ -221,6 +240,7 @@ def build_index():
   <a class="peoplelink" href="characters.html">{''.join(f'<img src="{image(b[2])[0]}" alt="" loading="lazy">' for c in chars[:8] for b in blocks(c["lines"]) if b[0] == "img")}<span>認識店裡的人 →</span></a>
 </section>
 {''.join(vols)}
+<section class="vol"><h2><small>欣賞插畫</small>圖庫</h2><a class="gal-teaser" href="gallery.html">{''.join('<img src="%s" alt="" loading="lazy">' % thumb(c["thumb"][2])[0] for c in chapters[::4] if c["thumb"])}<span>看全部 {N_ILLUS} 張 →</span></a></section>
 <section class="vol"><h2><small>附錄</small>原篇對照</h2><p class="about"><a href="appendix.html">小說第 1–104 話與原作集數的對照表 →</a></p></section>
 </main>"""
     open("index.html", "w").write(page(SITE, body, kind="is-home"))
@@ -274,13 +294,57 @@ def build_appendix():
     return len(rows)
 
 
-build_index(); build_characters(); build_chapters(); n = build_appendix()
+def build_gallery():
+    """圖庫：封面、人物插畫、各章插畫，點開看大圖並可連回章節"""
+    items, secs = [], []
+
+    def card(src, cap, sub, link):
+        i = len(items)
+        big, bw, bh = image(src)
+        t, tw, th = thumb(src)
+        items.append({"src": big, "cap": cap, "sub": sub, "link": link})
+        return (f'<button class="g-item" data-i="{i}"><img src="{t}" width="{tw}" height="{th}" alt="{html.escape(cap)}" loading="lazy" decoding="async">'
+                f'<span>{html.escape(cap)}</span></button>')
+
+    secs.append('<section class="g-sec"><h2>封面</h2><div class="g-grid">' + card(cover[2], "封面", "黃泉燒肉店｜小說文庫", "index.html") + '</div></section>')
+    people_cards = []
+    for c in chars:
+        for b in blocks(c["lines"]):
+            if b[0] == "img":
+                people_cards.append(card(b[2], b[1].split("｜")[0], "人物介紹", "characters.html"))
+    secs.append('<section class="g-sec"><h2>人物</h2><div class="g-grid">' + "".join(people_cards) + '</div></section>')
+    for v in volumes:
+        vt = v["title"].replace("　", " ‧ ")
+        cs = []
+        for ch in v["chapters"]:
+            for b in ch["blocks"]:
+                if b[0] == "img":
+                    alt = b[1]
+                    cap = alt.split("・")[-1] if "・" in alt else alt.split("｜")[0]
+                    cs.append(card(b[2], cap, f"第{ch['no']:02d}章　{ch['title']}", ch["file"]))
+        secs.append(f'<section class="g-sec"><h2>{html.escape(vt)}</h2><div class="g-grid">' + "".join(cs) + '</div></section>')
+    body = f"""<main class="gallery">
+<header class="ch-head"><p class="kicker">欣賞插畫</p><h1>圖庫</h1><p class="meta">{len(items)} 張插畫 ‧ 點圖片看大圖，可以左右切換</p></header>
+{''.join(secs)}
+</main>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="插畫">
+  <button class="lb-x" data-lb="close" aria-label="關閉">✕</button>
+  <button class="lb-nav prev" data-lb="prev" aria-label="上一張">‹</button>
+  <figure><img id="lbImg" alt=""><figcaption><b id="lbCap"></b><span id="lbSub"></span><a id="lbLink" href="#">到這一章閱讀 →</a></figcaption></figure>
+  <button class="lb-nav next" data-lb="next" aria-label="下一張">›</button>
+</div>
+<script>window.GALLERY={json.dumps(items, ensure_ascii=False)};</script>"""
+    open("gallery.html", "w").write(page("插畫圖庫｜" + SITE, body, kind="is-gallery"))
+    return len(items)
+
+
+build_index(); build_characters(); build_chapters(); n = build_appendix(); ng = build_gallery()
 json.dump([{"no": c["no"], "title": c["title"], "file": c["file"]} for c in chapters],
           open("assets/chapters.json", "w"), ensure_ascii=False)
-used = {v[0] for v in IMG_CACHE.values()}
+used = {v[0] for v in IMG_CACHE.values()} | THUMBS
 for d, _, fs in os.walk("img"):                 # 清掉這次沒用到的舊圖
     for f in fs:
         if os.path.join(d, f) not in used:
             os.remove(os.path.join(d, f))
 size = sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk("img") for f in fs)
-print(f"{len(chapters)} 章、{len(chars)} 位人物、附錄 {n} 列、插圖 {len(IMG_CACHE)} 張（{size / 1e6:.1f} MB）")
+print(f"{len(chapters)} 章、{len(chars)} 位人物、附錄 {n} 列、圖庫 {ng} 張、插圖 {len(IMG_CACHE)} 張（{size / 1e6:.1f} MB）")

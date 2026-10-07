@@ -71,3 +71,36 @@
   }
   document.querySelectorAll(".chap[data-ch]").forEach(function(a){ if(read[a.dataset.ch]) a.classList.add("read-done"); });
 })();
+
+/* 圖庫燈箱 */
+(function(){
+  var G = window.GALLERY, lb = document.getElementById("lb");
+  if(!G || !lb) return;
+  var i = 0, img = document.getElementById("lbImg");
+  function show(k){
+    i = (k + G.length) % G.length; var it = G[i];
+    img.src = it.src; img.alt = it.cap;
+    document.getElementById("lbCap").textContent = it.cap;
+    document.getElementById("lbSub").textContent = it.sub + "（" + (i+1) + " / " + G.length + "）";
+    document.getElementById("lbLink").href = it.link;
+    var nx = new Image(); nx.src = G[(i+1) % G.length].src;   // 先載下一張
+  }
+  function open(k){ show(k); lb.hidden = false; document.body.style.overflow = "hidden"; }
+  function close(){ lb.hidden = true; document.body.style.overflow = ""; }
+  document.addEventListener("click", function(e){
+    var b = e.target.closest(".g-item"); if(b){ open(+b.dataset.i); return; }
+    var c = e.target.closest("[data-lb]");
+    if(c){ var a = c.dataset.lb; if(a==="close") close(); else show(i + (a==="next"?1:-1)); return; }
+    if(!lb.hidden && e.target === lb) close();
+  });
+  document.addEventListener("keydown", function(e){
+    if(lb.hidden) return;
+    if(e.key==="Escape") close(); else if(e.key==="ArrowRight") show(i+1); else if(e.key==="ArrowLeft") show(i-1);
+  });
+  var x0 = null;
+  lb.addEventListener("touchstart", function(e){ x0 = e.touches[0].clientX; }, {passive:true});
+  lb.addEventListener("touchend", function(e){
+    if(x0 == null) return; var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1));
+  });
+})();
