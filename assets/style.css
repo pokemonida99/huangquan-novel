@@ -1,0 +1,117 @@
+/* 黃泉燒肉店｜小說文庫 */
+:root{
+  --fs:18px;
+  --bg:#f6efe3; --paper:#fbf6ec; --ink:#2a2420; --muted:#6f6355; --faint:#9a8d7c;
+  --line:#e3d6c2; --accent:#a8572a; --accent-soft:#f0dfcb; --shadow:0 18px 40px -24px rgba(60,35,15,.35);
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+}
+:root[data-theme="sepia"]{--bg:#eadcc2;--paper:#f1e5cd;--ink:#3b2e22;--muted:#6c5a45;--faint:#93806a;--line:#d8c4a3;--accent:#9a4b20;--accent-soft:#e3cfac}
+:root[data-theme="dark"]{--bg:#121014;--paper:#18151b;--ink:#e6dccd;--muted:#a99c8a;--faint:#7c7264;--line:#2d2830;--accent:#e2a36a;--accent-soft:#2b2220;--shadow:0 18px 40px -24px rgba(0,0,0,.8)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme]){--bg:#121014;--paper:#18151b;--ink:#e6dccd;--muted:#a99c8a;--faint:#7c7264;--line:#2d2830;--accent:#e2a36a;--accent-soft:#2b2220;--shadow:0 18px 40px -24px rgba(0,0,0,.8)}
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.7;transition:background .3s,color .3s}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;height:auto;display:block}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* top bar */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:30;transition:width .1s}
+.bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--serif);font-weight:900;font-size:17px;letter-spacing:.08em;color:var(--ink)}
+.brand span{font-weight:400;font-size:12px;letter-spacing:.2em;color:var(--faint);margin-left:8px}
+.brand:hover{text-decoration:none}
+.tools{display:flex;gap:6px}
+.tools button{padding:6px 12px;border:1px solid var(--line);border-radius:99px;font-size:13px;color:var(--muted)}
+.tools button:hover,.tools button[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+
+.panel{position:fixed;top:56px;right:16px;z-index:25;background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:12px 14px;box-shadow:var(--shadow);display:grid;gap:10px;font-size:14px;max-width:calc(100vw - 32px)}
+.panel .row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.panel .row span{color:var(--faint);font-size:12px;letter-spacing:.15em;min-width:3em}
+.panel button{padding:5px 11px;border:1px solid var(--line);border-radius:8px}
+.panel button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.panel b{min-width:3.2em;text-align:center;font-weight:500}
+
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:40;width:min(340px,88vw);overflow-y:auto;background:var(--paper);
+  border-left:1px solid var(--line);box-shadow:var(--shadow);padding:18px 14px 40px;display:flex;flex-direction:column;gap:2px}
+.drawer a{color:var(--ink);padding:7px 10px;border-radius:8px;font-size:15px;display:flex;gap:10px}
+.drawer a i{font-style:normal;color:var(--faint);font-size:12px;min-width:1.6em;padding-top:2px}
+.drawer a:hover{background:var(--accent-soft);text-decoration:none}
+.drawer a.here{background:var(--accent-soft);color:var(--accent)}
+.drawer .toc-vol{font-family:var(--serif);font-weight:600;font-size:13px;letter-spacing:.15em;color:var(--accent);margin:14px 10px 4px}
+.drawer .toc-top{font-weight:600}
+.scrim{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35)}
+
+/* home */
+.home{max-width:1080px;margin:0 auto;padding:28px 16px 40px}
+.hero{display:grid;gap:28px;align-items:center}
+@media(min-width:760px){.hero{grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:44px;padding-top:16px}}
+.cover{border-radius:6px;box-shadow:var(--shadow);width:100%;max-width:440px;margin:0 auto}
+.kicker{font-size:12px;letter-spacing:.3em;color:var(--accent);margin:0 0 8px}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(40px,9vw,68px);letter-spacing:.12em;margin:0 0 14px;line-height:1.2}
+.intro{font-family:var(--serif);font-size:18px;line-height:2;color:var(--ink);margin:0 0 14px}
+.meta{font-size:13px;color:var(--faint);margin:0 0 20px;letter-spacing:.06em}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-block;padding:11px 22px;border-radius:99px;background:var(--accent);color:var(--paper);font-weight:600;letter-spacing:.08em}
+.btn:hover{text-decoration:none;filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.about{color:var(--muted);font-size:15px;max-width:44em;margin:36px auto 0;text-align:center;line-height:1.9}
+.vol{margin-top:52px}
+.vol h2{font-family:var(--serif);font-size:26px;letter-spacing:.1em;margin:0 0 16px;display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.vol h2 small{font-size:13px;letter-spacing:.25em;color:var(--accent);font-weight:600}
+.chaps{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.chap{display:grid;grid-template-rows:auto auto auto 1fr;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;color:var(--ink);transition:transform .25s,box-shadow .25s}
+.chap:hover{text-decoration:none;transform:translateY(-3px);box-shadow:var(--shadow)}
+.chap img{aspect-ratio:4/3;width:100%;object-fit:cover}
+.chap .n{font-size:11px;letter-spacing:.2em;color:var(--accent);padding:12px 14px 0}
+.chap .t{font-family:var(--serif);font-weight:600;font-size:17px;padding:2px 14px 0;line-height:1.5}
+.chap .m{font-size:12px;color:var(--faint);padding:6px 14px 14px;align-self:end}
+.chap.read-done .n::after{content:" ‧ 已讀";color:var(--faint)}
+.chap.read-last{outline:2px solid var(--accent);outline-offset:-2px}
+.peoplelink{display:flex;align-items:center;gap:0;flex-wrap:wrap;color:var(--ink)}
+.peoplelink img{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:3px solid var(--bg);margin-left:-12px;box-shadow:0 4px 10px -4px rgba(0,0,0,.3)}
+.peoplelink img:first-child{margin-left:0}
+.peoplelink span{margin-left:16px;font-family:var(--serif);font-weight:600;color:var(--accent)}
+
+/* reading */
+.read{max-width:34em;margin:0 auto;padding:36px 20px 40px;font-size:var(--fs)}
+.ch-head{text-align:center;margin:20px 0 40px}
+.read .ch-head p{text-align:center;font-family:var(--sans);line-height:1.6;margin:0 0 6px}
+.ch-head h1{font-family:var(--serif);font-weight:900;font-size:1.9em;letter-spacing:.08em;line-height:1.4;margin:6px 0 10px}
+.ch-head h1 small{display:block;font-size:.45em;letter-spacing:.3em;color:var(--faint);font-weight:400;margin-bottom:6px}
+.ch-head .meta{font-size:13px}
+.read p{font-family:var(--serif);line-height:2.05;margin:0 0 1.15em;text-align:justify;letter-spacing:.03em}
+.read figure{margin:2.2em -20px;text-align:center}
+@media(min-width:700px){.read figure{margin:2.4em -60px}}
+.read figure img{margin:0 auto;border-radius:4px;max-height:82vh;width:auto}
+.read figcaption{font-size:13px;color:var(--faint);margin-top:10px;letter-spacing:.1em}
+.read h3{font-family:var(--serif);text-align:center;color:var(--accent);margin:2em 0 1em}
+.tbc{text-align:center !important;color:var(--accent);margin-top:3em !important}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:15px}
+.pager a{font-family:var(--serif);max-width:48%}
+.pager a:last-child{text-align:right}
+
+.people{display:grid;gap:28px;margin-top:32px}
+.person{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:start}
+@media(min-width:700px){.person{grid-template-columns:170px 1fr}}
+.person img{border-radius:10px;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:50% 15%}
+.pics.multi{display:grid;gap:6px}
+.person h2{font-family:var(--serif);font-size:1.2em;margin:0 0 6px;letter-spacing:.06em}
+.person p{font-size:.92em;line-height:1.95}
+
+.tablewrap{overflow-x:auto;margin:1em 0}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left}
+th{color:var(--faint);font-weight:500;font-size:13px;letter-spacing:.1em}
+td:first-child,td:nth-child(2){white-space:nowrap;color:var(--muted)}
+
+.foot{max-width:44em;margin:0 auto;padding:24px 16px 48px;text-align:center;font-size:12.5px;color:var(--faint);line-height:1.9}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
