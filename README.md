@@ -1,12 +1,16 @@
 # 黃泉燒肉店｜小說文庫
 
-IG 短劇《黃泉燒肉店》（[@baoandrain0428](https://www.instagram.com/baoandrain0428/)）的粉絲改寫小說，涵蓋原作第 1–104 話。七卷、二十三章，約十萬字，附一百多張插畫。
+IG 短劇《黃泉燒肉店》（[@baoandrain0428](https://www.instagram.com/baoandrain0428/)）的粉絲改寫小說，涵蓋原作第 1–104 話。
+
+目前版本：**v1.1（2026-10-07）**。七卷、二十三章，正文約 11 萬字；1 張封面、20 張人物插畫、101 張章節插畫。
 
 線上閱讀：https://pokemonida99.github.io/huangquan-novel/
 
 ## 網站功能
 
-- 每章一頁，插圖轉成 WebP（全站圖片約 12MB，原本單檔閱讀版 199MB）
+- 每章一頁，插圖轉成 WebP（全站圖片約 15MB；原本的單檔閱讀版約 360MB）
+- 插畫圖庫：依章節瀏覽全部插畫，點開看大圖、左右切換、連回章節
+- 換場處顯示「＊　＊　＊」分隔
 - 目錄抽屜、上一章／下一章
 - 字級調整，紙頁／米黃／夜讀三種背景
 - 自動記住讀到哪裡，首頁有「繼續閱讀」，讀完的章節會標「已讀」（只存在讀者自己的瀏覽器）
@@ -24,7 +28,7 @@ IG 短劇《黃泉燒肉店》（[@baoandrain0428](https://www.instagram.com/bao
 
 ## 更新
 
-1. 改 `src/novel.md`
+1. 把 `../1005/小說文庫/` 的新合訂稿複製成 `src/novel.md`（原篇對照複製成 `src/appendix.md`）。版本號、字數、插圖張數會從稿子自動帶出
 2. `python3 tools/build.py`（需要 Pillow；插圖原檔在 `../1005/小說文庫/插圖/`）
 3. commit 並 push，GitHub Pages 會自動更新
 

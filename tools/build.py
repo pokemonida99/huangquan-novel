@@ -150,7 +150,7 @@ for v in vols:
             vol["chapters"][-1]["lines"].append(ln)
 for ch in chapters:
     ch["blocks"] = blocks(ch["lines"])
-    ch["chars"] = sum(len(b[1]) for b in ch["blocks"] if b[0] == "p")
+    ch["chars"] = sum(len(re.findall(r"[\u4e00-\u9fff]", b[1])) for b in ch["blocks"] if b[0] == "p")   # 只算漢字，與讀我.md 的算法一致
     ch["file"] = "ch%02d.html" % ch["no"]
     ch["thumb"] = next((b for b in ch["blocks"] if b[0] == "img"), None)
 
