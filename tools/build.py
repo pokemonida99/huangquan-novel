@@ -83,6 +83,8 @@ def blocks(lines):
         m = IMG_RE.match(s)
         if m:
             flush(); out.append(("img", m.group(1), m.group(2))); continue
+        if s.replace("　", "").replace(" ", "") == "＊＊＊":   # 換場分隔
+            flush(); out.append(("sep",)); continue
         if s.startswith("### "):
             flush(); out.append(("h3", s[4:])); continue
         para.append(s)
@@ -95,6 +97,8 @@ def render(bs, prefix=""):
     for b in bs:
         if b[0] == "p":
             h.append("<p>%s</p>" % html.escape(b[1]))
+        elif b[0] == "sep":
+            h.append('<p class="sep" aria-hidden="true">＊　＊　＊</p>')
         elif b[0] == "h3":
             h.append("<h3>%s</h3>" % html.escape(b[1]))
         else:
@@ -117,6 +121,8 @@ for ln in text:
         cur["lines"].append(ln)
 
 front, people, vols = parts[0], parts[1], parts[2:]
+_v = re.search(r"版本：\s*(v[\d.]+)\s*[·‧]\s*([\d-]+)", "\n".join(front["lines"]))
+VERSION = "%s（%s）" % _v.groups() if _v else ""
 cover = next(b for b in blocks(front["lines"]) if b[0] == "img")
 
 # 人物介紹：每個 ## 一位
@@ -231,7 +237,7 @@ def build_index():
     <p class="kicker">粉絲改寫小說 ‧ 第 1–104 話</p>
     <h1>黃泉燒肉店</h1>
     <p class="intro">{html.escape(INTRO)}</p>
-    <p class="meta">七卷 ‧ 二十三章 ‧ 約 {round(total / 10000, 1)} 萬字 ‧ {N_ILLUS} 張插畫</p>
+    <p class="meta">{('版本 ' + VERSION + ' ‧ ') if VERSION else ''}七卷 ‧ 二十三章 ‧ 約 {round(total / 10000, 1)} 萬字 ‧ {N_ILLUS} 張插畫</p>
     <div class="cta"><a class="btn" href="{chapters[0]['file']}">從第一章開始</a><a class="btn ghost" id="resume" hidden href="#">繼續閱讀</a></div>
   </div>
 </section>
