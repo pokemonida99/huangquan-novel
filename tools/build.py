@@ -187,6 +187,9 @@ def toc_html(prefix=""):
     return "\n".join(h)
 
 
+N_ILLUS = len({m for m in re.findall(r"\]\((插圖[^)]*)\)", "\n".join(text)) if "封面" not in m})
+
+
 def build_index():
     src, w, h = image(cover[2])
     total = sum(c["chars"] for c in chapters)
@@ -209,7 +212,7 @@ def build_index():
     <p class="kicker">粉絲改寫小說 ‧ 第 1–104 話</p>
     <h1>黃泉燒肉店</h1>
     <p class="intro">{html.escape(INTRO)}</p>
-    <p class="meta">七卷 ‧ 二十三章 ‧ 約 {round(total / 10000, 1)} 萬字 ‧ 71 張插畫</p>
+    <p class="meta">七卷 ‧ 二十三章 ‧ 約 {round(total / 10000, 1)} 萬字 ‧ {N_ILLUS} 張插畫</p>
     <div class="cta"><a class="btn" href="{chapters[0]['file']}">從第一章開始</a><a class="btn ghost" id="resume" hidden href="#">繼續閱讀</a></div>
   </div>
 </section>
@@ -274,5 +277,10 @@ def build_appendix():
 build_index(); build_characters(); build_chapters(); n = build_appendix()
 json.dump([{"no": c["no"], "title": c["title"], "file": c["file"]} for c in chapters],
           open("assets/chapters.json", "w"), ensure_ascii=False)
+used = {v[0] for v in IMG_CACHE.values()}
+for d, _, fs in os.walk("img"):                 # 清掉這次沒用到的舊圖
+    for f in fs:
+        if os.path.join(d, f) not in used:
+            os.remove(os.path.join(d, f))
 size = sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk("img") for f in fs)
 print(f"{len(chapters)} 章、{len(chars)} 位人物、附錄 {n} 列、插圖 {len(IMG_CACHE)} 張（{size / 1e6:.1f} MB）")
