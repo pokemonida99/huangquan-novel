@@ -145,3 +145,8 @@ td:first-child,td:nth-child(2){white-space:nowrap;color:var(--muted)}
 .lb-nav.prev{left:4px}.lb-nav.next{right:4px}
 @media(max-width:600px){.lb-nav{top:auto;bottom:10px;transform:none;font-size:36px}}
 .read p.sep{text-align:center;color:var(--faint);letter-spacing:.4em;margin:2.2em 0;font-family:var(--sans)}
+.hero h1 small{display:block;font-size:.34em;letter-spacing:.5em;color:var(--muted);font-weight:600;margin-top:8px}
+.edition{font-size:13px;letter-spacing:.12em;color:var(--accent);margin:0 0 14px}
+.afterword{margin-top:3.5em;padding:1.6em 1.4em;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.afterword h2{font-family:var(--serif);font-size:1.1em;letter-spacing:.15em;margin:0 0 .8em;text-align:center}
+.read .afterword p{font-family:var(--sans);font-size:.85em;line-height:1.95;color:var(--muted);text-align:left}

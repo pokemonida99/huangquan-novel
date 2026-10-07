@@ -43,6 +43,7 @@ def image(src):
             im = im.resize((round(im.width * r), round(im.height * r)), Image.LANCZOS)
         im.save(out, "WEBP", quality=80, method=6)
     w, h = Image.open(out).size
+    out = out + "?v=" + hashlib.md5(open(out, "rb").read()).hexdigest()[:8]   # 換圖後網址跟著變
     IMG_CACHE[src] = (out, w, h)
     return IMG_CACHE[src]
 
@@ -52,7 +53,7 @@ THUMBS = set()
 
 def thumb(src):
     """圖庫用的小縮圖（寬 480）"""
-    big = image(src)[0]
+    big = image(src)[0].split("?")[0]
     out = big.replace("img/", "img/t/", 1)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     if not os.path.exists(out) or os.path.getmtime(big) > os.path.getmtime(out):
@@ -61,7 +62,7 @@ def thumb(src):
         im.save(out, "WEBP", quality=72, method=6)
     THUMBS.add(out)
     w, h = Image.open(out).size
-    return out, w, h
+    return out + "?v=" + hashlib.md5(open(out, "rb").read()).hexdigest()[:8], w, h
 
 
 # ------------------------------------------------------------------ 解析
@@ -104,7 +105,7 @@ def render(bs, prefix=""):
         else:
             alt = b[1]
             src, w, hh = image(b[2])
-            cap = alt.split("・")[-1] if "・" in alt else alt.split("｜")[0]   # 「章名｜文庫插畫・原作片名」只留原作片名
+            cap = alt   # 與閱讀版相同：完整顯示插圖說明
             h.append('<figure><img src="%s%s" width="%d" height="%d" alt="%s" loading="lazy" decoding="async">'
                      '<figcaption>%s</figcaption></figure>' % (prefix, src, w, hh, html.escape(alt), html.escape(cap)))
     return "\n".join(h)
@@ -123,6 +124,7 @@ for ln in text:
 front, people, vols = parts[0], parts[1], parts[2:]
 _v = re.search(r"版本：\s*(v[\d.]+)\s*[·‧]\s*([\d-]+)", "\n".join(front["lines"]))
 VERSION = "%s（%s）" % _v.groups() if _v else ""
+VER_RAW = "%s · %s" % _v.groups() if _v else ""
 cover = next(b for b in blocks(front["lines"]) if b[0] == "img")
 
 # 人物介紹：每個 ## 一位
@@ -153,6 +155,25 @@ for ch in chapters:
     ch["chars"] = sum(len(re.findall(r"[\u4e00-\u9fff]", b[1])) for b in ch["blocks"] if b[0] == "p")   # 只算漢字，與讀我.md 的算法一致
     ch["file"] = "ch%02d.html" % ch["no"]
     ch["thumb"] = next((b for b in ch["blocks"] if b[0] == "img"), None)
+
+# 書末「關於這一版」：以使用者的閱讀版為準
+def afterword():
+    rd = os.path.join(SRC_IMG, "黃泉燒肉店_閱讀版.html")
+    if os.path.exists(rd):
+        t = open(rd, encoding="utf-8").read()
+        m = re.search(r'<section class="afterword">(.*?)</section>', t, re.S)
+        if m:
+            body = m.group(1)
+            h2 = re.sub(r"<[^>]+>", "", re.search(r"<h2>(.*?)</h2>", body, re.S).group(1))
+            ps = [html.unescape(re.sub(r"<[^>]+>", "", x)) for x in re.findall(r"<p[^>]*>(.*?)</p>", body, re.S)]
+            open("src/afterword.md", "w").write("# " + h2 + "\n\n" + "\n\n".join(ps) + "\n")
+    lines = open("src/afterword.md", encoding="utf-8").read().strip().split("\n")
+    title = lines[0].lstrip("# ").strip()
+    ps = [l for l in lines[1:] if l.strip()]
+    return title, ps
+
+
+AFTER_TITLE, AFTER_PS = afterword()
 
 # ------------------------------------------------------------------ 版型
 VER = hashlib.md5(open("assets/style.css", "rb").read() + open("assets/reader.js", "rb").read()).hexdigest()[:8]
@@ -234,14 +255,14 @@ def build_index():
 <section class="hero">
   <img class="cover" src="{src}" width="{w}" height="{h}" alt="封面">
   <div class="hero-tx">
-    <p class="kicker">粉絲改寫小說 ‧ 第 1–104 話</p>
-    <h1>黃泉燒肉店</h1>
+    <p class="kicker">YOMI · A TABLE FOR THE DEPARTED</p>
+    <h1>黃泉燒肉店<small>小說文庫</small></h1>
+    {('<p class="edition">版本 ' + VER_RAW + '</p>') if VER_RAW else ''}
     <p class="intro">{html.escape(INTRO)}</p>
-    <p class="meta">{('版本 ' + VERSION + ' ‧ ') if VERSION else ''}七卷 ‧ 二十三章 ‧ 約 {round(total / 10000, 1)} 萬字 ‧ {N_ILLUS} 張插畫</p>
-    <div class="cta"><a class="btn" href="{chapters[0]['file']}">從第一章開始</a><a class="btn ghost" id="resume" hidden href="#">繼續閱讀</a></div>
+    <p class="meta">七卷 · {len(chapters)} 章 · 正文 {total:,} 字 · {N_ILLUS} 張插畫</p>
+    <div class="cta"><a class="btn" href="{chapters[0]['file']}">開始閱讀</a><a class="btn ghost" id="resume" hidden href="#">繼續閱讀</a></div>
   </div>
 </section>
-<p class="about">{html.escape(ABOUT)}</p>
 <section class="vol"><h2><small>開卷之前</small>人物介紹</h2>
   <a class="peoplelink" href="characters.html">{''.join(f'<img src="{image(b[2])[0]}" alt="" loading="lazy">' for c in chars[:8] for b in blocks(c["lines"]) if b[0] == "img")}<span>認識店裡的人 →</span></a>
 </section>
@@ -274,7 +295,9 @@ def build_chapters():
         nxt = chapters[i + 1] if i + 1 < len(chapters) else None
         pv = f'<a href="{prev["file"]}">← 第{prev["no"]:02d}章　{html.escape(prev["title"])}</a>' if prev else '<a href="characters.html">← 人物介紹</a>'
         nx = f'<a href="{nxt["file"]}">第{nxt["no"]:02d}章　{html.escape(nxt["title"])} →</a>' if nxt else '<a href="appendix.html">附錄：原篇對照 →</a>'
-        end = '<p class="tbc">（第六季連載中，故事未完待續）</p>' if not nxt else ""
+        end = ('<p class="tbc">（第六季連載中，故事未完待續）</p>'
+               f'<section class="afterword"><h2>{html.escape(AFTER_TITLE)}</h2>'
+               + "".join("<p>%s</p>" % html.escape(x) for x in AFTER_PS) + '</section>') if not nxt else ""
         vt = c["vol"].replace("　", " ‧ ")
         body = f"""<main class="read" data-ch="{c['no']}">
 <header class="ch-head"><p class="kicker">{html.escape(vt)}</p><h1><small>第{c['no']:02d}章</small>{html.escape(c['title'])}</h1>
@@ -326,7 +349,7 @@ def build_gallery():
             for b in ch["blocks"]:
                 if b[0] == "img":
                     alt = b[1]
-                    cap = alt.split("・")[-1] if "・" in alt else alt.split("｜")[0]
+                    cap = alt
                     cs.append(card(b[2], cap, f"第{ch['no']:02d}章　{ch['title']}", ch["file"]))
         secs.append(f'<section class="g-sec"><h2>{html.escape(vt)}</h2><div class="g-grid">' + "".join(cs) + '</div></section>')
     body = f"""<main class="gallery">
@@ -347,7 +370,7 @@ def build_gallery():
 build_index(); build_characters(); build_chapters(); n = build_appendix(); ng = build_gallery()
 json.dump([{"no": c["no"], "title": c["title"], "file": c["file"]} for c in chapters],
           open("assets/chapters.json", "w"), ensure_ascii=False)
-used = {v[0] for v in IMG_CACHE.values()} | THUMBS
+used = {v[0].split("?")[0] for v in IMG_CACHE.values()} | THUMBS
 for d, _, fs in os.walk("img"):                 # 清掉這次沒用到的舊圖
     for f in fs:
         if os.path.join(d, f) not in used:
