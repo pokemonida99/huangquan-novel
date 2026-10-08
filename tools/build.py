@@ -14,7 +14,8 @@ os.chdir(ROOT)
 SITE = "黃泉燒肉店｜小說文庫"
 CREDIT = ('原作：IG 短劇《黃泉燒肉店》© 棲渺拾光 '
           '<a href="https://www.instagram.com/baoandrain0428/" rel="noopener">@baoandrain0428</a>。'
-          '本站為粉絲改寫的小說，非官方作品，不做商業用途。')
+          '本站為粉絲改寫的小說，非官方作品，不做商業用途。'
+          '<br>姊妹站：<a href="https://pokemonida99.github.io/qimiao-shiguang/" rel="noopener">棲渺拾光 ‧ 燈下資料館</a>（逐集大綱、人物、劇照、狂粉測驗）')
 INTRO = ("這間店，讓來到黃泉的人坐下來，吃一頓自己喜歡的飯。有人想見最後一面，有人想說一句真心話；"
          "店裡的人，也各自帶著還沒走完的故事。")
 ABOUT = ("依 IG 短劇《黃泉燒肉店》的劇情與台詞改寫成小說，涵蓋原作第 1 至 104 話。"
@@ -230,6 +231,7 @@ def toc_html(prefix=""):
             h.append('<a href="%s%s" data-ch="%d"><i>%02d</i>%s</a>' % (prefix, c["file"], c["no"], c["no"], html.escape(c["title"])))
     h.append('<a class="toc-top" href="%sappendix.html">附錄：原篇對照</a>' % prefix)
     h.append('<a class="toc-top" href="%sgallery.html">插畫圖庫</a>' % prefix)
+    h.append('<a class="toc-top" href="https://pokemonida99.github.io/qimiao-shiguang/" rel="noopener">公式書網站：棲渺拾光 ↗</a>')
     return "\n".join(h)
 
 
