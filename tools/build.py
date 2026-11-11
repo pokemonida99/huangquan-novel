@@ -30,13 +30,13 @@ def image(src):
     if src in IMG_CACHE:
         return IMG_CACHE[src]
     path = os.path.join(SRC_IMG, src)
-    if not os.path.exists(path):
-        sys.exit("找不到插圖：" + path)
     name = os.path.splitext(os.path.basename(src))[0]
     sub = "c" if "人物插畫" in src else "s"
     out = "img/%s/%s.webp" % (sub, re.sub(r"[^\w一-鿿-]", "_", name))
+    if not os.path.exists(path) and not os.path.exists(out):   # 原檔不在本機時，沿用已轉好的 WebP
+        sys.exit("找不到插圖：" + path)
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    if not os.path.exists(out) or os.path.getmtime(path) > os.path.getmtime(out):
+    if os.path.exists(path) and (not os.path.exists(out) or os.path.getmtime(path) > os.path.getmtime(out)):
         im = Image.open(path).convert("RGB")
         lim = 640 if sub == "c" else 1200
         if max(im.size) > lim:
