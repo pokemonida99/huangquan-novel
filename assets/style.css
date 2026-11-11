@@ -29,6 +29,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .brand span{font-weight:400;font-size:12px;letter-spacing:.2em;color:var(--faint);margin-left:8px}
 .brand:hover{text-decoration:none}
 .tools{display:flex;gap:6px}
+.bar{flex-wrap:wrap}
+.sites{display:flex;gap:4px;margin-left:auto}
+.sites a{padding:6px 8px;font-size:13px;color:var(--muted);letter-spacing:.06em;white-space:nowrap}
+.sites a:hover{color:var(--accent);text-decoration:none}
+.sites a i{font-style:normal;font-size:10px;margin-left:2px;opacity:.7}
+@media(max-width:560px){.sites{order:3;width:100%;margin:-4px 0 -4px;justify-content:flex-end}.sites a{padding:3px 6px;font-size:12.5px}.panel{top:92px}}
 .tools button{padding:6px 12px;border:1px solid var(--line);border-radius:99px;font-size:13px;color:var(--muted)}
 .tools button:hover,.tools button[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
 

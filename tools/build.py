@@ -203,6 +203,7 @@ def page(title, body, prefix="", kind="", desc=""):
 <div class="progress" id="progress"></div>
 <header class="bar">
   <a class="brand" href="{prefix}index.html">黃泉燒肉店<span>小說文庫</span></a>
+  <nav class="sites" aria-label="姊妹站"><a href="https://pokemonida99.github.io/qimiao-shiguang/" target="_blank" rel="noopener">資料館<i aria-hidden="true">↗</i></a><a href="https://pokemonida99.github.io/huangquan-puzzle/" target="_blank" rel="noopener">遊戲<i aria-hidden="true">↗</i></a></nav>
   <div class="tools">
     <a class="tool" href="{prefix}gallery.html">圖庫</a>
     <button id="btnToc" aria-label="目錄">目錄</button>
