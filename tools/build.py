@@ -18,8 +18,8 @@ CREDIT = ('原作：IG 短劇《黃泉燒肉店》© 棲渺拾光 '
           '<br>姊妹站：<a href="https://pokemonida99.github.io/qimiao-shiguang/" rel="noopener">棲渺拾光 ‧ 燈下資料館</a>（逐集大綱、人物、劇照、狂粉測驗）')
 INTRO = ("這間店，讓來到黃泉的人坐下來，吃一頓自己喜歡的飯。有人想見最後一面，有人想說一句真心話；"
          "店裡的人，也各自帶著還沒走完的故事。")
-ABOUT = ("依 IG 短劇《黃泉燒肉店》的劇情與台詞改寫成小說，涵蓋原作第 1 至 104 話。"
-         "正文依故事轉折分為七卷、二十三章，補上日常與內心描寫；第六季仍在連載，正文停在第 104 話，尚未揭曉的結果不另作補完。")
+ABOUT = ("依 IG 短劇《黃泉燒肉店》的劇情與台詞改寫成小說，涵蓋原作第 1 至 130 話。"
+         "正文依故事轉折分為八卷、二十九章，補上日常與內心描寫；第七季仍在連載，正文停在第 130 話，尚未揭曉的結果不另作補完。")
 
 # ------------------------------------------------------------------ 圖片
 IMG_CACHE = {}
@@ -261,7 +261,7 @@ def build_index():
     <h1>黃泉燒肉店<small>小說文庫</small></h1>
     {('<p class="edition">版本 ' + VER_RAW + '</p>') if VER_RAW else ''}
     <p class="intro">{html.escape(INTRO)}</p>
-    <p class="meta">七卷 · {len(chapters)} 章 · 正文 {total:,} 字 · {N_ILLUS} 張插畫</p>
+    <p class="meta">八卷 · {len(chapters)} 章 · 正文 {total:,} 字 · {N_ILLUS} 張插畫</p>
     <div class="cta"><a class="btn" href="{chapters[0]['file']}">開始閱讀</a><a class="btn ghost" id="resume" hidden href="#">繼續閱讀</a></div>
   </div>
 </section>
@@ -270,7 +270,7 @@ def build_index():
 </section>
 {''.join(vols)}
 <section class="vol"><h2><small>欣賞插畫</small>圖庫</h2><a class="gal-teaser" href="gallery.html">{''.join('<img src="%s" alt="" loading="lazy">' % thumb(c["thumb"][2])[0] for c in chapters[::4] if c["thumb"])}<span>看全部 {N_ILLUS} 張 →</span></a></section>
-<section class="vol"><h2><small>附錄</small>原篇對照</h2><p class="about"><a href="appendix.html">小說第 1–104 話與原作集數的對照表 →</a></p></section>
+<section class="vol"><h2><small>附錄</small>原篇對照</h2><p class="about"><a href="appendix.html">小說第 1–130 話與原作集數的對照表 →</a></p></section>
 </main>"""
     open("index.html", "w").write(page(SITE, body, kind="is-home"))
 
@@ -318,7 +318,7 @@ def build_appendix():
         if m:
             rows.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % tuple(html.escape(x) for x in m.groups()))
     body = f"""<main class="read"><header class="ch-head"><p class="kicker">附錄</p><h1>原篇對照</h1></header>
-<p>小說依事件轉折分章，不按影片一集一章切開。下表列出小說涵蓋的原作 104 話，以及對應的原作集數（EP 季-集）與片名，方便對照影片。</p>
+<p>小說依事件轉折分章，不按影片一集一章切開。下表列出小說涵蓋的原作 130 話，以及對應的原作集數（EP 季-集）與片名，方便對照影片。</p>
 <div class="tablewrap"><table><thead><tr><th>話數</th><th>原作集數</th><th>原作片名</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
 <nav class="pager"><a href="{chapters[-1]['file']}">← 第{chapters[-1]['no']:02d}章　{html.escape(chapters[-1]['title'])}</a><a href="index.html">回到目錄 →</a></nav></main>"""
     open("appendix.html", "w").write(page("原篇對照｜" + SITE, body, kind="is-read"))

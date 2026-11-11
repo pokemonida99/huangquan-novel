@@ -1,8 +1,8 @@
 # 黃泉燒肉店｜小說文庫
 
-IG 短劇《黃泉燒肉店》（[@baoandrain0428](https://www.instagram.com/baoandrain0428/)）的粉絲改寫小說，涵蓋原作第 1–104 話。
+IG 短劇《黃泉燒肉店》（[@baoandrain0428](https://www.instagram.com/baoandrain0428/)）的粉絲改寫小說，涵蓋原作第 1–130 話。
 
-目前版本：**v1.5（2026-10-08）**，下次改版從 v2.0 開始。七卷、二十三章，正文 107,831 字；1 張封面、20 張人物插畫、216 張章節插畫。
+目前版本：**v2.0（2026-11-11）**：八卷、二十九章，正文 132,628 字；1 張封面、22 張人物插畫、243 張章節插畫。v2.0 補上第 105–130 話（第六季完結、第七季〈聖母願〉）。
 
 線上閱讀：https://pokemonida99.github.io/huangquan-novel/
 姊妹站：棲渺拾光 ‧ 燈下資料館 https://pokemonida99.github.io/qimiao-shiguang/（目錄與每頁頁尾有連結）
@@ -31,8 +31,8 @@ IG 短劇《黃泉燒肉店》（[@baoandrain0428](https://www.instagram.com/bao
 
 ## 更新
 
-1. 把 `../1005/小說文庫/` 的新合訂稿複製成 `src/novel.md`（原篇對照複製成 `src/appendix.md`）。版本號、字數、插圖張數會從稿子自動帶出
-2. `../xihuan-mv/.venv/bin/python tools/build.py`（需要 Pillow；插圖原檔在 `../1005/小說文庫/插圖/`）。書末「關於這一版」會從閱讀版 HTML 自動擷取
+1. **`src/novel.md` 是正文的唯一來源**（v1.5 起比 1005 的舊合訂稿新），直接改這份；改完再用它同步回 `../1005/小說文庫/`（合訂稿與分卷），不要反過來覆蓋。版本號、字數、插圖張數會從稿子自動帶出
+2. `python3 tools/build.py`（需要 Pillow；插圖原檔在 `../1005/小說文庫/插圖/`，本機沒有原檔的圖會沿用 `img/` 已轉好的 WebP）。書末「關於這一版」會從閱讀版 HTML 自動擷取
 3. commit 並 push，GitHub Pages 會自動更新
 
 ## 原則
